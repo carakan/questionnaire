@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class <%= get_scope.capitalize %>::SurveysController < ApplicationController
-  before_filter :load_survey, :only => [:show, :edit, :update]
+  before_filter :load_survey, only: %i[show edit update]
 
   def index
     @surveys = Survey::Survey.all
@@ -11,24 +13,22 @@ class <%= get_scope.capitalize %>::SurveysController < ApplicationController
 
   def create
     @survey = Survey::Survey.new(survey_params)
-    if @survey.valid? and @survey.save
+    if @survey.valid? && @survey.save
       default_redirect
     else
-      render :action => :new
+      render action: :new
     end
   end
 
-  def edit
-  end
+  def edit; end
 
-  def show
-  end
+  def show; end
 
   def update
-    if @survey.update_attributes(survey_params)
+    if @survey.update(survey_params)
       default_redirect
     else
-      render :action => :edit
+      render action: :edit
     end
   end
 
@@ -41,18 +41,12 @@ class <%= get_scope.capitalize %>::SurveysController < ApplicationController
   def load_survey
     @survey = Survey::Survey.find(params[:id])
   end
-  
+
   #######
   private
-  #######
 
-  # Rails 4 Strong Params
   def survey_params
-    if Rails::VERSION::MAJOR < 4
-      params[:survey_survey]
-    else
-      protected_attrs =  ["created_at", "updated_at"]
-      params.require(:survey_survey).permit(Survey::Survey.new.attributes.keys - protected_attrs, :sections_attributes => [Survey::Section.new.attributes.keys - protected_attrs, :questions_attributes => [Survey::Question.new.attributes.keys - protected_attrs, :options_attributes => [Survey::Option.new.attributes.keys - protected_attrs]]])
-    end
+    protected_attrs = %w[created_at updated_at]
+    params.require(:survey_survey).permit(Survey::Survey.new.attributes.keys - protected_attrs, sections_attributes: [Survey::Section.new.attributes.keys - protected_attrs, questions_attributes: [Survey::Question.new.attributes.keys - protected_attrs, options_attributes: [Survey::Option.new.attributes.keys - protected_attrs]]])
   end
 end
