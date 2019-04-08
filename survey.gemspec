@@ -1,7 +1,6 @@
-# -*- encoding: utf-8 -*-
 # frozen_string_literal: true
 
-$LOAD_PATH.push File.expand_path('../lib', __FILE__)
+$LOAD_PATH.push File.expand_path('lib', __dir__)
 require 'survey/version'
 
 Gem::Specification.new do |s|
@@ -16,11 +15,11 @@ Gem::Specification.new do |s|
   s.licenses    = 'MIT'
   s.require_paths = %w[lib]
 
-  s.add_dependency('rails', '~> 5.1')
-  s.add_development_dependency('mocha')
+  s.add_dependency('rails', '~> 5.1.7')
   s.add_development_dependency('faker')
+  s.add_development_dependency('mocha')
+  s.add_development_dependency('pry-byebug')
+  s.add_development_dependency('pry-rails')
   s.add_development_dependency('rake')
   s.add_development_dependency('rubocop')
-  s.add_development_dependency('pry-rails')
-  s.add_development_dependency('pry-byebug')
 end
