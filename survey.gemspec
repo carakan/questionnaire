@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.licenses    = 'MIT'
   s.require_paths = %w[lib]
 
-  s.add_dependency('rails', '~> 5.1.7')
+  s.add_dependency('rails', '>= 5.0')
   s.add_development_dependency('faker')
   s.add_development_dependency('mocha')
   s.add_development_dependency('pry-byebug')
