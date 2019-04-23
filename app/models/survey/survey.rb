@@ -3,27 +3,14 @@
 class Survey::Survey < ActiveRecord::Base
   self.table_name = 'survey_surveys'
 
-  # relations
   has_many :attempts
   has_many :sections
-
-  # rails 3 attr_accessible support
-  if Rails::VERSION::MAJOR < 4
-    attr_accessible :name, :description, :finished, :active, :sections_attributes, :attempts_number, :locale_name, :locale_description
-  end
-
-  accepts_nested_attributes_for :sections,
-                                reject_if: ->(q) { q[:name].blank? }, allow_destroy: true
-
+  accepts_nested_attributes_for :sections, reject_if: ->(q) { q[:name].blank? }, allow_destroy: true
   scope :active, -> { where(active: true) }
   scope :inactive, -> { where(active: false) }
-
-  validates :attempts_number,
-            numericality: { only_integer: true, greater_than: -1 }
-
-  # validations
+  validates :attempts_number, numericality: { only_integer: true, greater_than: -1 }
   validates :description, :name, presence: true, allow_blank: false
-  validate  :check_active_requirements
+  validate :check_active_requirements
 
   # returns all the correct options for current surveys
   def correct_options
@@ -36,25 +23,24 @@ class Survey::Survey < ActiveRecord::Base
   end
 
   def avaliable_for_participant?(participant)
-    current_number_of_attempts =
-      attempts.for_participant(participant).size
+    current_number_of_attempts = attempts.for_participant(participant).size
     upper_bound = attempts_number
     !((current_number_of_attempts >= upper_bound && upper_bound != 0))
   end
 
   def name
-    I18n.locale == I18n.default_locale ? super : locale_name.blank? ? super : locale_name
+    I18n.locale == I18n.default_locale ? super : locale_name.presence || super
   end
 
   def description
-    I18n.locale == I18n.default_locale ? super : locale_description.blank? ? super : locale_description
+    if I18n.locale == I18n.default_locale
+      super
+    else
+      locale_description.presence || super
+    end
   end
 
-  #######
-
   private
-
-  #######
 
   # a surveys only can be activated if has one or more sections and questions
   def check_active_requirements

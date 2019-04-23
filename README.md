@@ -1,7 +1,6 @@
 # Questionnaire
 
 [![Code Climate](https://codeclimate.com/github/dr-click/survey.png)](https://codeclimate.com/github/dr-click/questionnaire)
-
 ### Questionnaire on Rails...
 
 Questionnaire is a Rails Engine that brings multi types of quizzes, surveys and contests into your Rails
@@ -15,47 +14,37 @@ You can view the Questionnaire documentation in RDoc format here:
 http://rubydoc.info/github/dr-click/questionnaire/master/frames
 
 ## Main Features:
-
-- Questionnaire can limit the number of attempts for each participant, can have multiple sections
-- Sections can have multiple questions
-- Questions can have multiple answers
-- Answers can have different weights and types (multi choices, single choice, number, text)
-- Can use 2 languages (Main language field, Localized field) for Surveys, Sections, Questions and Answers attributes
-- Base Scaffold Support for Active Admin, Rails Admin and default Rails Controllers
-- Base calculation for scores
-- Easy integration with your project
+ - Questionnaire can limit the number of attempts for each participant, can have multiple sections
+ - Sections can have multiple questions
+ - Questions can have multiple answers
+ - Answers can have different weights and types (multi choices, single choice, number, text)
+ - Can use 2 languages (Main language field, Localized field) for Surveys, Sections, Questions and Answers attributes
+ - Base Scaffold Support for Active Admin, Rails Admin and default Rails Controllers
+ - Base calculation for scores
+ - Easy integration with your project
 
 ## Installation
 
 Add survey to your Gemfile:
-
 ```ruby
 gem 'questionnaire_engine', '0.1', :require=>"survey"
 
 ```
-
 or
-
 ```ruby
-gem 'questionnaire_engine', github: 'dr-click/questionnaire', branch: 'master', require: "survey"
+gem 'questionnaire_engine', github: 'dr-click/questionnaire', branch: 'master', :require=>"survey"
 
 ```
-
 or use this for Rails 5
-
 ```ruby
-gem 'questionnaire_engine', github: 'clearfunction/questionnaire', branch: 'master', require: "survey"
+gem 'questionnaire_engine', github: 'clearfunction/questionnaire', branch: 'master', :require=>"survey"
 
 ```
-
 Then run bundle to install the Gem:
-
 ```sh
 bundle install
 ```
-
 Now generate and run migrations:
-
 ```sh
 rails generate survey:install
 
@@ -63,7 +52,6 @@ bundle exec rake db:migrate
 ```
 
 ## Important notice for Rails 5.1
-
 Add Rails version to all generated migrations. Example
 
 ```ruby
@@ -73,9 +61,7 @@ class CreateSurvey < ActiveRecord::Migration # change to: class CreateSurvey < A
 ## Getting started with Survey
 
 ## Survey inside your models
-
 To make a model aware of you just need to add `has_surveys` on it:
-
 ```ruby
 class User < ActiveRecord::Base
   has_surveys
@@ -83,20 +69,16 @@ class User < ActiveRecord::Base
   #... (your code) ...
 end
 ```
-
 There is the concept of participant, in our example we choose the User Model.
 Every participant can respond to surveys and every response is registered as a attempt.
 By default, survey logic assumes an infinite number of attempts per participant
 but if your surveys need to have a maximum number of attempts
 you can pass the attribute `attempts_number` when creating them.
-
 ```ruby
 # Each Participant can respond 4 times this survey
 Survey::Survey.new(:name => "Star Wars Quiz", :attempts_number => 4)
 ```
-
 ## Questionnaire used in your controllers
-
 In this example we are using the current_user helper
 but you can do it in the way you want.
 
@@ -126,7 +108,7 @@ class ContestsController < ApplicationController
       render :action => :new
     end
   end
-
+  
   #######
   private
   #######
@@ -139,14 +121,12 @@ class ContestsController < ApplicationController
       params.require(:survey_attempt).permit(answers_attributes: [:id, :question_id, :option_id, :option_text, :option_number, :predefined_value_id, :_destroy, :finished])
     end
   end
-
+  
 end
 ```
 
 ## Survey Associations
-
 To add a survey to a particular model (model has_many :surveys), use the `has_many_surveys` helper
-
 ```ruby
 class Lesson < ActiveRecord::Base
   has_many_surveys
@@ -154,9 +134,7 @@ class Lesson < ActiveRecord::Base
   #... (your code) ...
 end
 ```
-
 Then, create a module mixin that adds `belongs_to` to the survey model based on your class name
-
 ```ruby
 # app/models/survey/belongs_to_lesson.rb
 module Survey
@@ -168,9 +146,7 @@ module Survey
   end
 end
 ```
-
 This will dynamically add the association to the survey model. However, you will need to generate a migration in order to add the foreign key to the `survey_surveys` table like so:
-
 ```ruby
 class AddLessonIdToSurveySurveys < ActiveRecord::Migration
   def change
@@ -179,13 +155,12 @@ class AddLessonIdToSurveySurveys < ActiveRecord::Migration
 end
 ```
 
+
 ## Survey inside your Views
 
 ### Controlling Survey avaliability per participant
-
 To control which page participants see you can use method `avaliable_for_participant?`
 that checks if the participant already spent his attempts.
-
 ```erb
 <h3><%= flash[:alert]%></h3>
 <h3><%= flash[:error]%></h3>
@@ -214,8 +189,8 @@ that checks if the participant already spent his attempts.
             <p><span><%= "#{question.head_number} : " if question.head_number %></span><%= question.text %></p>
             <p><%= question.description if question.description %></p>
             <% question.options.each do |option| %>
-
-
+              
+              
               <% if option.options_type_id == Survey::OptionsType.multi_choices %>
                 <%= hidden_field_tag "survey_attempt[answers_attributes][#{seq}][question_id]", question.id %>
                 <%= check_box_tag "survey_attempt[answers_attributes][#{seq}][option_id]", option.id %>
@@ -234,7 +209,7 @@ that checks if the participant already spent his attempts.
                 <%= text_field_tag "survey_attempt[answers_attributes][#{seq}][option_text]", "" %>
                 <% seq += 1 %>
               <% end %>
-
+              
               <%= option.text %> <br/>
             <% end -%>
           </li>
@@ -247,18 +222,14 @@ that checks if the participant already spent his attempts.
 ```
 
 ### Scaffolds and CRUD frameworks
-
 If you are using Rails Admin or Active Admin, you can generate base CRUD screens for Survey with:
-
 ```sh
 rails generate survey active_admin
 
 rails generate survey rails_admin
 ```
-
 If you want a simple way to get started you can use the `plain` option which is a simple Rails scaffold to generate the controller and views related with survey logic.
 By default when you type `rails g survey plain` it generates a controller in the `admin` namespace but you can choose your own namespace as well:
-
 ```sh
 rails generate survey plain namespace:contests
 ```
@@ -271,8 +242,8 @@ Afterwards if you want to generate more routes, you can using the command:
 rails generate survey routes namespace:admin
 ```
 
-## How to use it
 
+## How to use it
 Every user has a collection of attempts for each survey that he respond to. Is up to you to
 make averages and collect reports based on that information.
 What makes Survey useful is that all the logic behind surveys is now abstracted and well integrated,
@@ -293,20 +264,17 @@ user_highest_score  = survey_answers.for_participant(@user).high_score
 #check the highest score made for this survey
 global_highest_score = survey_answers.high_score
 ```
-
-# Compability
-
+# Compability 
 ### Rails
-
 Survey supports Rails 3 and 4. For use in Rails 4 without using protected_attributes gem.
 Rails 4 support is recent, so some minor issues may still be present, please report them.
 
 ### Active Admin
-
 Only support versions of Active Admin higher than 0.3.1.
 
 # License
-
 - Modified by [Dr-Click](http://github.com/dr-click)
 - Copyright © 2013 [Runtime Revolution](http://www.runtime-revolution.com), released under the MIT license.
 - This repository was forked from the original one : https://github.com/runtimerevolution/survey
+ 
+
