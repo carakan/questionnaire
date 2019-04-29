@@ -1,11 +1,18 @@
 # frozen_string_literal: true
 
-class CreateSections < ActiveRecord::Migration
+MIGRATION_CLASS =
+  if ActiveRecord::VERSION::MAJOR >= 5
+    ActiveRecord::Migration["#{ActiveRecord::VERSION::MAJOR}.#{ActiveRecord::VERSION::MINOR}"]
+  else
+    ActiveRecord::Migration
+  end
+
+class CreateSections < MIGRATION_CLASS
   def self.up
     create_table :survey_sections do |t|
-      t.string  :head_number
-      t.string  :name
-      t.text    :description
+      t.string :head_number
+      t.string :name
+      t.text :description
       t.integer :survey_id
 
       t.timestamps

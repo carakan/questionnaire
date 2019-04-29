@@ -1,8 +1,14 @@
 # frozen_string_literal: true
 
-class AddHeadNumberToOptionsTable < ActiveRecord::Migration
+MIGRATION_CLASS =
+  if ActiveRecord::VERSION::MAJOR >= 5
+    ActiveRecord::Migration["#{ActiveRecord::VERSION::MAJOR}.#{ActiveRecord::VERSION::MINOR}"]
+  else
+    ActiveRecord::Migration
+  end
+
+class AddHeadNumberToOptionsTable < MIGRATION_CLASS
   def change
-    # Survey Options table
     add_column :survey_options, :head_number, :string
   end
 end

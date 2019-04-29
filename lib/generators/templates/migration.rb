@@ -1,11 +1,17 @@
 # frozen_string_literal: true
 
-class CreateSurvey < ActiveRecord::Migration
+MIGRATION_CLASS =
+  if ActiveRecord::VERSION::MAJOR >= 5
+    ActiveRecord::Migration["#{ActiveRecord::VERSION::MAJOR}.#{ActiveRecord::VERSION::MINOR}"]
+  else
+    ActiveRecord::Migration
+  end
+
+class CreateSurvey < MIGRATION_CLASS
   def self.up
-    # survey surveys logic
     create_table :survey_surveys do |t|
-      t.string  :name
-      t.text    :description
+      t.string :name
+      t.text :description
       t.integer :attempts_number, default: 0
       t.boolean :finished, default: false
       t.boolean :active, default: true
@@ -15,7 +21,7 @@ class CreateSurvey < ActiveRecord::Migration
 
     create_table :survey_questions do |t|
       t.integer :survey_id
-      t.string  :text
+      t.string :text
 
       t.timestamps
     end
@@ -25,25 +31,22 @@ class CreateSurvey < ActiveRecord::Migration
       t.integer :weight, default: 0
       t.string :text
       t.boolean :correct
-
       t.timestamps
     end
 
-    # survey answer logic
     create_table :survey_attempts do |t|
       t.belongs_to :participant, polymorphic: true
-      t.integer    :survey_id
-      t.boolean    :winner, null: false, default: false
-      t.decimal    :score
-
+      t.integer :survey_id
+      t.boolean :winner, null: false, default: false
+      t.decimal :score
       t.timestamps
     end
 
     create_table :survey_answers do |t|
-      t.integer    :attempt_id
-      t.integer    :question_id
-      t.integer    :option_id
-      t.boolean    :correct, null: false, default: false
+      t.integer :attempt_id
+      t.integer :question_id
+      t.integer :option_id
+      t.boolean :correct, null: false, default: false
       t.timestamps
     end
   end
